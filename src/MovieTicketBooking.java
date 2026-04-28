@@ -1,5 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -148,7 +152,7 @@ public class MovieTicketBooking extends JFrame {
 
                 // Dynamically fetch the current cinema name to draw on the screen
                 Movie selectedMovie = (Movie) movieComboBox.getSelectedItem();
-                String screenText = (selectedMovie != null ? selectedMovie.cinema.toUpperCase() : "CINEMA") + "   S C R E E N";
+                String screenText = ("S   C   R   E   E   N");
 
                 FontMetrics fm = g2d.getFontMetrics();
                 int textWidth = fm.stringWidth(screenText);
@@ -338,7 +342,32 @@ public class MovieTicketBooking extends JFrame {
             return;
         }
 
-        int totalCost = currentSelection.size() * TICKET_PRICE;
+        int totalTickets = currentSelection.size();
+
+        // --- NEW: Discount Logic ---
+        int discountedCount = 0;
+        String discountInput = JOptionPane.showInputDialog(
+                this,
+                "You selected " + totalTickets + " ticket(s).\nHow many are for Students/Seniors (20% off)?",
+                "0"
+        );
+
+        if (discountInput != null && !discountInput.trim().isEmpty()) {
+            try {
+                discountedCount = Integer.parseInt(discountInput.trim());
+                if (discountedCount < 0 || discountedCount > totalTickets) {
+                    JOptionPane.showMessageDialog(this, "Invalid number. Applying 0 discounts.", "Error", JOptionPane.ERROR_MESSAGE);
+                    discountedCount = 0;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid input. Applying 0 discounts.", "Error", JOptionPane.ERROR_MESSAGE);
+                discountedCount = 0;
+            }
+        }
+
+        int regularCount = totalTickets - discountedCount;
+        int discountedPrice = (int) (TICKET_PRICE * 0.8); // 20% off
+        int totalCost = (regularCount * TICKET_PRICE) + (discountedCount * discountedPrice);
 
         StringBuilder seatsToBook = new StringBuilder();
         for (int i = 0; i < currentSelection.size(); i++) {
@@ -353,8 +382,15 @@ public class MovieTicketBooking extends JFrame {
         String time = (String) timeComboBox.getSelectedItem();
 
         String paymentMessage = String.format(
-                "Movie: %s\nCinema: %s\nTime: %s\nSeats: %s\n\nTotal Tickets: %d\nPrice per Ticket: PHP %d\n----------------------------\nTOTAL AMOUNT DUE: PHP %d\n\nProceed with payment?",
-                movie.title, movie.cinema, time, seatsToBook.toString(), currentSelection.size(), TICKET_PRICE, totalCost
+                "Movie: %s\nCinema: %s\nTime: %s\nSeats: %s\n\n" +
+                        "Regular Tickets (%d): PHP %d\n" +
+                        "Discounted Tickets (%d): PHP %d\n" +
+                        "----------------------------\n" +
+                        "TOTAL AMOUNT DUE: PHP %d\n\nProceed with payment?",
+                movie.title, movie.cinema, time, seatsToBook.toString(),
+                regularCount, (regularCount * TICKET_PRICE),
+                discountedCount, (discountedCount * discountedPrice),
+                totalCost
         );
 
         int confirm = JOptionPane.showConfirmDialog(this, paymentMessage, "Payment Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -365,8 +401,44 @@ public class MovieTicketBooking extends JFrame {
             for (int index : currentSelection) {
                 bookedSeats[index] = true;
             }
-            JOptionPane.showMessageDialog(this, "Payment successful! Tickets booked.", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+            // Generate the physical receipt file
+            generateReceipt(movie.title, movie.cinema, time, seatsToBook.toString(), regularCount, discountedCount, totalCost);
+
+            JOptionPane.showMessageDialog(this, "Payment successful! Tickets booked.\nA receipt has been saved to the 'Receipts' folder.", "Success", JOptionPane.INFORMATION_MESSAGE);
             updateMovieSelection();
+        }
+    }
+
+    private void generateReceipt(String movieTitle, String cinema, String time, String seats, int regular, int discounted, int totalCost) {
+        // --- NEW: Create a specific folder for receipts ---
+        String folderName = "Receipts";
+        File directory = new File(folderName);
+        if (!directory.exists()) {
+            directory.mkdirs(); // Creates the folder if it doesn't exist
+        }
+
+        // Save the file inside the newly created folder
+        String filename = folderName + File.separator + "Receipt_" + System.currentTimeMillis() + ".txt";
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+            writer.println("=========================================");
+            writer.println("        CINEMA TICKET RECEIPT");
+            writer.println("=========================================");
+            writer.println("Date: " + new SimpleDateFormat("yyyy-MM-dd hh:mm a").format(new Date()));
+            writer.println("Movie: " + movieTitle);
+            writer.println("Location: " + cinema);
+            writer.println("Showtime: " + time);
+            writer.println("Seats: " + seats);
+            writer.println("-----------------------------------------");
+            writer.println(String.format("Regular Tickets   (x%d): PHP %d", regular, regular * TICKET_PRICE));
+            writer.println(String.format("Discounted Tickets(x%d): PHP %d", discounted, discounted * (int)(TICKET_PRICE * 0.8)));
+            writer.println("-----------------------------------------");
+            writer.println("TOTAL PAID: PHP " + totalCost);
+            writer.println("=========================================");
+            writer.println("Thank you for your purchase!");
+        } catch (IOException e) {
+            System.err.println("Failed to save receipt: " + e.getMessage());
         }
     }
 

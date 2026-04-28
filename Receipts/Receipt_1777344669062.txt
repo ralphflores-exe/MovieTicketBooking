@@ -1,0 +1,15 @@
+=========================================
+        CINEMA TICKET RECEIPT
+=========================================
+Date: 2026-04-28 10:51 AM
+Movie: Demon Slayer: Kimetsu No Yaiba The Movie: Infinity Castle
+Location: Cinema 1
+Showtime: 10:00 AM
+Seats: D7, D8, C8, C7
+-----------------------------------------
+Regular Tickets   (x2): PHP 600
+Discounted Tickets(x2): PHP 480
+-----------------------------------------
+TOTAL PAID: PHP 1080
+=========================================
+Thank you for your purchase!
