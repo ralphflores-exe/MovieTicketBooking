@@ -29,8 +29,8 @@ public class MovieTicketBooking extends JFrame {
     // --- Database Simulation ---
     // Here we assign specific cinemas and times (factoring in different movie lengths)
     private final Movie[] moviesList = {
-            new Movie("The Matrix", "Cinema 1", new String[]{"10:00 AM", "1:30 PM", "5:00 PM", "8:30 PM"}),
-            new Movie("Inception (Extended)", "Cinema 2", new String[]{"10:30 AM", "2:45 PM", "7:00 PM"}), // Longer movie, fewer showtimes
+            new Movie("Demon Slayer: Kimetsu No Yaiba The Movie: Infinity Castle", "Cinema 1", new String[]{"10:00 AM", "1:30 PM", "5:00 PM", "8:30 PM"}),
+            new Movie("Project Hail Mary", "Cinema 2", new String[]{"10:30 AM", "2:45 PM", "7:00 PM"}), // Longer movie, fewer showtimes
             new Movie("Interstellar", "Cinema 3", new String[]{"11:00 AM", "3:30 PM", "8:00 PM"}),
             new Movie("Dune", "Cinema 4", new String[]{"12:00 PM", "3:45 PM", "7:30 PM", "11:15 PM"})
     };
