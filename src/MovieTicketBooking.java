@@ -1,9 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,24 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MovieTicketBooking extends JFrame {
-
-    // --- Custom Class to hold Movie Data ---
-    static class Movie {
-        String title;
-        String cinema;
-        String[] showtimes;
-
-        public Movie(String title, String cinema, String[] showtimes) {
-            this.title = title;
-            this.cinema = cinema;
-            this.showtimes = showtimes;
-        }
-
-        @Override
-        public String toString() {
-            return title; // This is what shows up in the ComboBox
-        }
-    }
 
     // --- Database Simulation ---
     // Here we assign specific cinemas and times (factoring in different movie lengths)
@@ -95,13 +73,13 @@ public class MovieTicketBooking extends JFrame {
 
         // Cinema Indicator (Updates dynamically)
         cinemaIndicatorLabel = new JLabel("Location: Cinema 1");
-        cinemaIndicatorLabel.setForeground(Color.GREEN);
+        cinemaIndicatorLabel.setForeground(Color.WHITE);
         cinemaIndicatorLabel.setFont(new Font("Arial", Font.BOLD, 14));
         selectionPanel.add(cinemaIndicatorLabel);
 
         // Time Selection
         JLabel timeLabel = new JLabel("Showtime: ");
-        timeLabel.setForeground(Color.GREEN);
+        timeLabel.setForeground(Color.WHITE);
         selectionPanel.add(timeLabel);
 
         timeComboBox = new JComboBox<>();
@@ -115,7 +93,7 @@ public class MovieTicketBooking extends JFrame {
         clockPanel.setBackground(Color.BLACK);
         dateTimeLabel = new JLabel();
         dateTimeLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        dateTimeLabel.setForeground(Color.GREEN);
+        dateTimeLabel.setForeground(Color.WHITE);
         startLiveClock();
         clockPanel.add(dateTimeLabel);
 
@@ -402,43 +380,11 @@ public class MovieTicketBooking extends JFrame {
                 bookedSeats[index] = true;
             }
 
-            // Generate the physical receipt file
-            generateReceipt(movie.title, movie.cinema, time, seatsToBook.toString(), regularCount, discountedCount, totalCost);
+            // Delegate receipt generation to our new utility class
+            ReceiptPrinter.generateReceipt(movie.title, movie.cinema, time, seatsToBook.toString(), regularCount, discountedCount, totalCost, TICKET_PRICE);
 
             JOptionPane.showMessageDialog(this, "Payment successful! Tickets booked.\nA receipt has been saved to the 'Receipts' folder.", "Success", JOptionPane.INFORMATION_MESSAGE);
             updateMovieSelection();
-        }
-    }
-
-    private void generateReceipt(String movieTitle, String cinema, String time, String seats, int regular, int discounted, int totalCost) {
-        // --- NEW: Create a specific folder for receipts ---
-        String folderName = "Receipts";
-        File directory = new File(folderName);
-        if (!directory.exists()) {
-            directory.mkdirs(); // Creates the folder if it doesn't exist
-        }
-
-        // Save the file inside the newly created folder
-        String filename = folderName + File.separator + "Receipt_" + System.currentTimeMillis() + ".txt";
-
-        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
-            writer.println("=========================================");
-            writer.println("        CINEMA TICKET RECEIPT");
-            writer.println("=========================================");
-            writer.println("Date: " + new SimpleDateFormat("yyyy-MM-dd hh:mm a").format(new Date()));
-            writer.println("Movie: " + movieTitle);
-            writer.println("Location: " + cinema);
-            writer.println("Showtime: " + time);
-            writer.println("Seats: " + seats);
-            writer.println("-----------------------------------------");
-            writer.println(String.format("Regular Tickets   (x%d): PHP %d", regular, regular * TICKET_PRICE));
-            writer.println(String.format("Discounted Tickets(x%d): PHP %d", discounted, discounted * (int)(TICKET_PRICE * 0.8)));
-            writer.println("-----------------------------------------");
-            writer.println("TOTAL PAID: PHP " + totalCost);
-            writer.println("=========================================");
-            writer.println("Thank you for your purchase!");
-        } catch (IOException e) {
-            System.err.println("Failed to save receipt: " + e.getMessage());
         }
     }
 
