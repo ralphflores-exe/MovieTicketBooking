@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class MovieTicketBooking extends JFrame {
 
-    // --- Database Simulation ---
     private final Movie[] moviesList = {
             new Movie("Demon Slayer: Kimetsu No Yaiba The Movie: Infinity Castle", "Cinema 1", new String[]{"10:00 AM", "1:30 PM", "5:00 PM", "8:30 PM"}),
             new Movie("Project Hail Mary", "Cinema 2", new String[]{"10:30 AM", "2:45 PM", "7:00 PM"}),
@@ -34,7 +33,6 @@ public class MovieTicketBooking extends JFrame {
     private final int TOTAL_SEATS = 112;
     private final int TICKET_PRICE = 300;
 
-    // --- Snack Prices ---
     private final int POPCORN_PRICE = 150;
     private final int SODA_PRICE = 80;
 
@@ -45,7 +43,6 @@ public class MovieTicketBooking extends JFrame {
             }
         }
 
-        // --- WINDOWED FULLSCREEN SETUP ---
         setUndecorated(true);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -54,7 +51,6 @@ public class MovieTicketBooking extends JFrame {
         setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(Color.BLACK);
 
-        // Header Panel
         JPanel headerPanel = new JPanel(new BorderLayout(20, 20));
         headerPanel.setBackground(Color.BLACK);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 10, 40));
@@ -129,7 +125,6 @@ public class MovieTicketBooking extends JFrame {
 
         add(headerPanel, BorderLayout.NORTH);
 
-        // Center Panel
         JPanel cinemaLayout = new JPanel(new BorderLayout());
         cinemaLayout.setBackground(Color.BLACK);
 
@@ -198,7 +193,6 @@ public class MovieTicketBooking extends JFrame {
         cinemaLayout.add(seatPanel, BorderLayout.CENTER);
         add(cinemaLayout, BorderLayout.CENTER);
 
-        // Bottom Panel
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBackground(Color.BLACK);
 
@@ -212,7 +206,7 @@ public class MovieTicketBooking extends JFrame {
         bookButton.setFont(new Font("Arial", Font.BOLD, 22));
         bookButton.setBackground(Color.WHITE);
         bookButton.setForeground(Color.BLACK);
-        bookButton.setPreferredSize(new Dimension(300, 80));
+        bookButton.setPreferredSize(new Dimension(300, 60));
         bookButton.addActionListener(e -> processPayment());
 
         bottomPanel.add(legendPanel, BorderLayout.NORTH);
@@ -336,7 +330,6 @@ public class MovieTicketBooking extends JFrame {
         Movie movie = (Movie) movieComboBox.getSelectedItem();
         String time = (String) timeComboBox.getSelectedItem();
 
-        // Get Seat Labels for receipt
         StringBuilder seatsText = new StringBuilder();
         for (int i = 0; i < currentSelection.size(); i++) {
             int idx = currentSelection.get(i);
@@ -354,7 +347,6 @@ public class MovieTicketBooking extends JFrame {
             boolean[] booked = bookedSeatsMap.get(getCurrentSessionKey());
             for (int idx : currentSelection) booked[idx] = true;
 
-            // UPDATED: Now passing popcornQty and sodaQty to the ReceiptPrinter
             ReceiptPrinter.generateReceipt(
                     movie.title,
                     movie.cinema,

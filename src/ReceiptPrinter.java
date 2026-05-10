@@ -5,16 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ReceiptPrinter {
-
-    /**
-     * Generates a text-based receipt saved in a 'Receipts' folder.
-     * Updated to handle snack quantities and detailed ticket breakdowns.
-     */
     public static void generateReceipt(String movieTitle, String cinema, String showtime, String seats,
                                        int regCount, int discCount, int popcornQty, int sodaQty,
                                        int totalAmount, int unitPrice) {
 
-        // Ensure the receipts directory exists
         File directory = new File("Receipts");
         if (!directory.exists()) {
             directory.mkdir();
