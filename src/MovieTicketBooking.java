@@ -326,8 +326,8 @@ public class MovieTicketBooking extends JFrame {
 
         int popcornQty = 0, sodaQty = 0;
         JPanel snackPanel = new JPanel(new GridLayout(2, 2, 15, 15));
-        JSpinner popSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
-        JSpinner sodaSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
+        JSpinner popSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+        JSpinner sodaSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
         snackPanel.add(new JLabel("Popcorn (PHP " + POPCORN_PRICE + "):")); snackPanel.add(popSpinner);
         snackPanel.add(new JLabel("Soda (PHP " + SODA_PRICE + "):")); snackPanel.add(sodaSpinner);
 

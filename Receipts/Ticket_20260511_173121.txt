@@ -1,0 +1,19 @@
+==========================================
+                CineServe                 
+==========================================
+Date: Monday, May 11, 2026
+Time: 05:31 PM
+------------------------------------------
+MOVIE:    Avengers: Doomsday (2026)
+CINEMA:   Cinema 4
+SHOWTIME: 12:00 PM
+SEATS:    D7, D8
+------------------------------------------
+ITEMS Breakdown:
+- Regular Ticket (x2):   PHP 600
+------------------------------------------
+TOTAL AMOUNT:           PHP 600
+------------------------------------------
+       Thank you for choosing us!        
+    Please present this at the entrance.  
+==========================================
