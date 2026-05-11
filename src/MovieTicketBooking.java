@@ -37,9 +37,18 @@ public class MovieTicketBooking extends JFrame {
     private final int SODA_PRICE = 80;
 
     public MovieTicketBooking() {
+        // --- LOCAL STORAGE INTEGRATION ---
+        // 1. Attempt to load previously saved booking data
+        Map<String, boolean[]> savedData = DatabaseManager.loadBookings();
+        if (savedData != null) {
+            bookedSeatsMap.putAll(savedData);
+        }
+
+        // 2. Initialize any missing movie/time slots that aren't in the saved data
         for (Movie movie : moviesList) {
             for (String time : movie.showtimes) {
-                bookedSeatsMap.put(movie.title + "-" + movie.cinema + "-" + time, new boolean[TOTAL_SEATS]);
+                String key = movie.title + "-" + movie.cinema + "-" + time;
+                bookedSeatsMap.putIfAbsent(key, new boolean[TOTAL_SEATS]);
             }
         }
 
@@ -278,6 +287,8 @@ public class MovieTicketBooking extends JFrame {
             int confirm = JOptionPane.showConfirmDialog(this, "Seat already booked. Cancel reservation?", "Cancel?", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 bookedSeats[index] = false;
+                // PERSISTENCE: Save state after cancelling a booking
+                DatabaseManager.saveBookings(bookedSeatsMap);
                 updateMovieSelection();
             }
             return;
@@ -346,6 +357,9 @@ public class MovieTicketBooking extends JFrame {
         if (JOptionPane.showConfirmDialog(this, summary, "Payment Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             boolean[] booked = bookedSeatsMap.get(getCurrentSessionKey());
             for (int idx : currentSelection) booked[idx] = true;
+
+            // PERSISTENCE: Save the entire map to file once payment is confirmed
+            DatabaseManager.saveBookings(bookedSeatsMap);
 
             ReceiptPrinter.generateReceipt(
                     movie.title,
