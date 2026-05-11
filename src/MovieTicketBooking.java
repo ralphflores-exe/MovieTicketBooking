@@ -9,10 +9,10 @@ import java.util.Map;
 public class MovieTicketBooking extends JFrame {
 
     private final Movie[] moviesList = {
-            new Movie("Demon Slayer: Kimetsu No Yaiba The Movie: Infinity Castle", "Cinema 1", new String[]{"10:00 AM", "1:30 PM", "5:00 PM", "8:30 PM"}),
-            new Movie("Project Hail Mary", "Cinema 2", new String[]{"10:30 AM", "2:45 PM", "7:00 PM"}),
-            new Movie("Interstellar", "Cinema 3", new String[]{"11:00 AM", "3:30 PM", "8:00 PM"}),
-            new Movie("Dune", "Cinema 4", new String[]{"12:00 PM", "3:45 PM", "7:30 PM", "11:15 PM"})
+            new Movie("Kimetsu No Yaiba The Movie (2025): Infinity Castle", "Cinema 1", new String[]{"10:00 AM", "1:30 PM", "5:00 PM", "8:30 PM"}),
+            new Movie("Project Hail Mary (2026)", "Cinema 2", new String[]{"10:30 AM", "2:45 PM", "7:00 PM"}),
+            new Movie("Good Boy (2025)", "Cinema 3", new String[]{"11:00 AM", "3:30 PM", "8:00 PM"}),
+            new Movie("Avengers: Doomsday (2026)", "Cinema 4", new String[]{"12:00 PM", "3:45 PM", "7:30 PM", "11:15 PM"})
     };
 
     private JComboBox<Movie> movieComboBox;
@@ -73,7 +73,7 @@ public class MovieTicketBooking extends JFrame {
 
         movieComboBox = new JComboBox<>(moviesList);
         movieComboBox.addActionListener(e -> updateTimeDropdown());
-        movieComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+        movieComboBox.setFont(new Font("Arial", Font.BOLD, 14));
         selectionPanel.add(movieComboBox);
 
         cinemaIndicatorLabel = new JLabel("Location: Cinema 1");
@@ -88,7 +88,7 @@ public class MovieTicketBooking extends JFrame {
 
         timeComboBox = new JComboBox<>();
         timeComboBox.addActionListener(e -> updateMovieSelection());
-        timeComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+        timeComboBox.setFont(new Font("Arial", Font.BOLD, 14));
         selectionPanel.add(timeComboBox);
 
         seatsRemainingLabel = new JLabel("Seats Left: " + TOTAL_SEATS);
@@ -141,7 +141,7 @@ public class MovieTicketBooking extends JFrame {
                 g2d.setColor(Color.WHITE);
                 g2d.setStroke(new BasicStroke(2));
                 g2d.drawRect(x, y, w, h);
-                g2d.setFont(new Font("Arial", Font.BOLD, 20));
+                g2d.setFont(new Font("Arial", Font.BOLD, 28));
                 FontMetrics fm = g2d.getFontMetrics();
                 g2d.drawString("S  C  R  E  E  N", (getWidth() - fm.stringWidth("S  C  R  E  E  N")) / 2, y + (h / 2) + (fm.getAscent() / 2) - 2);
             }
