@@ -30,7 +30,10 @@ public class MovieTicketBooking extends JFrame {
     private final Map<String, boolean[]> bookedSeatsMap = new HashMap<>();
     private final ArrayList<Integer> currentSelection = new ArrayList<>();
 
-    private final int TOTAL_SEATS = 112;
+    // Updated: 5 rows (A-E) * 14 seats = 70 total seats
+    private final int ROWS = 5;
+    private final int COLS = 14;
+    private final int TOTAL_SEATS = ROWS * COLS;
     private final int TICKET_PRICE = 300;
 
     private final int POPCORN_PRICE = 150;
@@ -38,9 +41,7 @@ public class MovieTicketBooking extends JFrame {
 
     public MovieTicketBooking() {
         Map<String, boolean[]> savedData = DatabaseManager.loadBookings();
-        if (savedData != null) {
-            bookedSeatsMap.putAll(savedData);
-        }
+        if (savedData != null) bookedSeatsMap.putAll(savedData);
 
         for (Movie movie : moviesList) {
             for (String time : movie.showtimes) {
@@ -51,8 +52,7 @@ public class MovieTicketBooking extends JFrame {
 
         setUndecorated(true);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-
-        setTitle("Cinema Ticket Booking System - Pro Edition");
+        setTitle("CineServe");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(Color.BLACK);
@@ -73,7 +73,6 @@ public class MovieTicketBooking extends JFrame {
         selectionPanel.add(movieLabel);
 
         movieComboBox = new JComboBox<>(moviesList);
-        movieComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         movieComboBox.addActionListener(e -> updateTimeDropdown());
         selectionPanel.add(movieComboBox);
 
@@ -88,11 +87,10 @@ public class MovieTicketBooking extends JFrame {
         selectionPanel.add(timeLabel);
 
         timeComboBox = new JComboBox<>();
-        timeComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         timeComboBox.addActionListener(e -> updateMovieSelection());
         selectionPanel.add(timeComboBox);
 
-        seatsRemainingLabel = new JLabel("Seats Left: 112");
+        seatsRemainingLabel = new JLabel("Seats Left: " + TOTAL_SEATS);
         seatsRemainingLabel.setForeground(Color.ORANGE);
         seatsRemainingLabel.setFont(new Font("Arial", Font.BOLD, 18));
         selectionPanel.add(seatsRemainingLabel);
@@ -109,11 +107,8 @@ public class MovieTicketBooking extends JFrame {
         rightHeaderPanel.add(dateTimeLabel);
 
         JButton exitButton = new JButton("EXIT");
-        exitButton.setFont(new Font("Arial", Font.BOLD, 12));
         exitButton.setBackground(new Color(180, 0, 0));
         exitButton.setForeground(Color.WHITE);
-        exitButton.setFocusPainted(false);
-        exitButton.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
         exitButton.addActionListener(e -> System.exit(0));
         rightHeaderPanel.add(exitButton);
 
@@ -125,7 +120,6 @@ public class MovieTicketBooking extends JFrame {
         posterLabel.setOpaque(true);
         posterLabel.setBackground(new Color(30, 30, 30));
         posterLabel.setForeground(Color.WHITE);
-        posterLabel.setFont(new Font("Arial", Font.BOLD, 18));
         posterLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
         headerPanel.add(posterLabel, BorderLayout.CENTER);
 
@@ -140,16 +134,15 @@ public class MovieTicketBooking extends JFrame {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2d.setColor(Color.DARK_GRAY);
-                g2d.fillArc(200, 10, getWidth() - 400, 80, 0, 180);
-
+                int w = getWidth() - 400, h = 40, x = (getWidth() - w) / 2, y = 30;
+                g2d.setColor(new Color(30, 30, 30));
+                g2d.fillRect(x, y, w, h);
                 g2d.setColor(Color.WHITE);
-                g2d.setFont(new Font("Arial", Font.BOLD, 24));
-                String screenText = "S   C   R   E   E   N";
+                g2d.setStroke(new BasicStroke(2));
+                g2d.drawRect(x, y, w, h);
+                g2d.setFont(new Font("Arial", Font.BOLD, 20));
                 FontMetrics fm = g2d.getFontMetrics();
-                int textWidth = fm.stringWidth(screenText);
-                g2d.drawString(screenText, (getWidth() - textWidth) / 2, 45);
+                g2d.drawString("S  C  R  E  E  N", (getWidth() - fm.stringWidth("S  C  R  E  E  N")) / 2, y + (h / 2) + (fm.getAscent() / 2) - 2);
             }
         };
         screenPanel.setPreferredSize(new Dimension(1000, 100));
@@ -160,9 +153,10 @@ public class MovieTicketBooking extends JFrame {
         seatPanel.setBackground(Color.BLACK);
         seatPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JPanel leftBlock = new JPanel(new GridLayout(8, 4, 12, 12));
-        JPanel centerBlock = new JPanel(new GridLayout(8, 6, 12, 12));
-        JPanel rightBlock = new JPanel(new GridLayout(8, 4, 12, 12));
+        // Updated: GridLayouts now use 5 rows (A-E)
+        JPanel leftBlock = new JPanel(new GridLayout(ROWS, 4, 12, 12));
+        JPanel centerBlock = new JPanel(new GridLayout(ROWS, 6, 12, 12));
+        JPanel rightBlock = new JPanel(new GridLayout(ROWS, 4, 12, 12));
 
         leftBlock.setBackground(Color.BLACK);
         centerBlock.setBackground(Color.BLACK);
@@ -170,10 +164,11 @@ public class MovieTicketBooking extends JFrame {
 
         seatButtons = new JButton[TOTAL_SEATS];
 
-        for (int r = 0; r < 8; r++) {
+        // Updated: Loop now runs for ROWS (5 iterations, A to E)
+        for (int r = 0; r < ROWS; r++) {
             char rowLetter = (char) ('A' + r);
-            for (int c = 0; c < 14; c++) {
-                int index = r * 14 + c;
+            for (int c = 0; c < COLS; c++) {
+                int index = r * COLS + c;
                 String seatLabel = rowLetter + String.valueOf(c + 1);
 
                 seatButtons[index] = new JButton(seatLabel);
@@ -232,33 +227,28 @@ public class MovieTicketBooking extends JFrame {
     }
 
     private void updateTimeDropdown() {
-        Movie selectedMovie = (Movie) movieComboBox.getSelectedItem();
-        if (selectedMovie == null) return;
-
-        cinemaIndicatorLabel.setText("Location: " + selectedMovie.cinema);
+        Movie movie = (Movie) movieComboBox.getSelectedItem();
+        if (movie == null) return;
+        cinemaIndicatorLabel.setText("Location: " + movie.cinema);
         timeComboBox.removeAllItems();
-        for (String time : selectedMovie.showtimes) {
-            timeComboBox.addItem(time);
-        }
-
+        for (String time : movie.showtimes) timeComboBox.addItem(time);
         if (screenPanel != null) screenPanel.repaint();
         updateMovieSelection();
     }
 
     private String getCurrentSessionKey() {
-        Movie selectedMovie = (Movie) movieComboBox.getSelectedItem();
-        String selectedTime = (String) timeComboBox.getSelectedItem();
-        if (selectedMovie == null || selectedTime == null) return null;
-        return selectedMovie.title + "-" + selectedMovie.cinema + "-" + selectedTime;
+        Movie movie = (Movie) movieComboBox.getSelectedItem();
+        String time = (String) timeComboBox.getSelectedItem();
+        return (movie == null || time == null) ? null : movie.title + "-" + movie.cinema + "-" + time;
     }
 
     private void updateMovieSelection() {
         String sessionKey = getCurrentSessionKey();
         if (sessionKey == null) return;
 
-        Movie selectedMovie = (Movie) movieComboBox.getSelectedItem();
-        String selectedTime = (String) timeComboBox.getSelectedItem();
-        posterLabel.setText("<html><center><font size='5'>" + selectedMovie.title + "</font><br><br>" + selectedMovie.cinema + " | " + selectedTime + "</center></html>");
+        Movie movie = (Movie) movieComboBox.getSelectedItem();
+        String time = (String) timeComboBox.getSelectedItem();
+        posterLabel.setText("<html><center><font size='5'>" + movie.title + "</font><br><br>" + movie.cinema + " | " + time + "</center></html>");
 
         boolean[] bookedSeats = bookedSeatsMap.get(sessionKey);
         int bookedCount = 0;
@@ -281,10 +271,8 @@ public class MovieTicketBooking extends JFrame {
 
         boolean[] bookedSeats = bookedSeatsMap.get(sessionKey);
         if (bookedSeats[index]) {
-            int confirm = JOptionPane.showConfirmDialog(this, "Seat already booked. Cancel reservation?", "Cancel?", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(this, "Seat already booked. Cancel reservation?", "Cancel?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 bookedSeats[index] = false;
-                // PERSISTENCE: Save state after cancelling a booking
                 DatabaseManager.saveBookings(bookedSeatsMap);
                 updateMovieSelection();
             }
@@ -306,81 +294,51 @@ public class MovieTicketBooking extends JFrame {
             return;
         }
 
-        int totalTickets = currentSelection.size();
-        int discountedCount = 0;
-        String discountInput = JOptionPane.showInputDialog(this, "Total Seats: " + totalTickets + "\nHow many Student/Senior discounts (20% off)?", "0");
+        int totalTickets = currentSelection.size(), discountedCount = 0;
         try {
-            discountedCount = Math.min(totalTickets, Math.max(0, Integer.parseInt(discountInput)));
+            String input = JOptionPane.showInputDialog(this, "Total Seats: " + totalTickets + "\nHow many Student/Senior discounts (20% off)?", "0");
+            discountedCount = Math.min(totalTickets, Math.max(0, Integer.parseInt(input)));
         } catch (Exception e) { discountedCount = 0; }
 
-        int popcornQty = 0;
-        int sodaQty = 0;
-
+        int popcornQty = 0, sodaQty = 0;
         JPanel snackPanel = new JPanel(new GridLayout(2, 2, 15, 15));
-        snackPanel.add(new JLabel("Popcorn (PHP " + POPCORN_PRICE + "):"));
         JSpinner popSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
-        snackPanel.add(popSpinner);
-        snackPanel.add(new JLabel("Soda (PHP " + SODA_PRICE + "):"));
         JSpinner sodaSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
-        snackPanel.add(sodaSpinner);
+        snackPanel.add(new JLabel("Popcorn (PHP " + POPCORN_PRICE + "):")); snackPanel.add(popSpinner);
+        snackPanel.add(new JLabel("Soda (PHP " + SODA_PRICE + "):")); snackPanel.add(sodaSpinner);
 
-        int snackChoice = JOptionPane.showConfirmDialog(this, snackPanel, "Cinema Concessions", JOptionPane.OK_CANCEL_OPTION);
-        if (snackChoice == JOptionPane.OK_OPTION) {
+        if (JOptionPane.showConfirmDialog(this, snackPanel, "Cinema Concessions", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             popcornQty = (int) popSpinner.getValue();
             sodaQty = (int) sodaSpinner.getValue();
         }
 
-        int regularCount = totalTickets - discountedCount;
-        int ticketTotal = (regularCount * TICKET_PRICE) + (discountedCount * (int)(TICKET_PRICE * 0.8));
-        int snackTotal = (popcornQty * POPCORN_PRICE) + (sodaQty * SODA_PRICE);
-        int finalTotal = ticketTotal + snackTotal;
+        int reg = totalTickets - discountedCount;
+        int total = (reg * TICKET_PRICE) + (discountedCount * (int)(TICKET_PRICE * 0.8)) + (popcornQty * POPCORN_PRICE) + (sodaQty * SODA_PRICE);
 
         Movie movie = (Movie) movieComboBox.getSelectedItem();
         String time = (String) timeComboBox.getSelectedItem();
 
-        StringBuilder seatsText = new StringBuilder();
+        StringBuilder seats = new StringBuilder();
         for (int i = 0; i < currentSelection.size(); i++) {
             int idx = currentSelection.get(i);
-            char row = (char) ('A' + (idx / 14));
-            int col = (idx % 14) + 1;
-            seatsText.append(row).append(col).append(i == currentSelection.size() - 1 ? "" : ", ");
+            seats.append((char) ('A' + (idx / COLS))).append((idx % COLS) + 1).append(i == currentSelection.size() - 1 ? "" : ", ");
         }
 
-        String summary = String.format(
-                "ORDER SUMMARY\n------------------------------------\nMovie: %s\nTickets: %d (Reg: %d, Disc: %d)\nSnacks: %d Popcorn, %d Soda\n------------------------------------\nTOTAL: PHP %d\n\nFinalize and Print Receipt?",
-                movie.title, totalTickets, regularCount, discountedCount, popcornQty, sodaQty, finalTotal
-        );
+        String summary = String.format("ORDER SUMMARY\nMovie: %s\nTickets: %d\nTOTAL: PHP %d\n\nFinalize?", movie.title, totalTickets, total);
 
-        if (JOptionPane.showConfirmDialog(this, summary, "Payment Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        if (JOptionPane.showConfirmDialog(this, summary, "Payment", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             boolean[] booked = bookedSeatsMap.get(getCurrentSessionKey());
             for (int idx : currentSelection) booked[idx] = true;
-
-            // PERSISTENCE: Save the entire map to file once payment is confirmed
             DatabaseManager.saveBookings(bookedSeatsMap);
-
-            ReceiptPrinter.generateReceipt(
-                    movie.title,
-                    movie.cinema,
-                    time,
-                    seatsText.toString(),
-                    regularCount,
-                    discountedCount,
-                    popcornQty,
-                    sodaQty,
-                    finalTotal,
-                    TICKET_PRICE
-            );
-
-            JOptionPane.showMessageDialog(this, "Payment Successful!\nReceipt generated in 'Receipts' folder.");
+            ReceiptPrinter.generateReceipt(movie.title, movie.cinema, time, seats.toString(), reg, discountedCount, popcornQty, sodaQty, total, TICKET_PRICE);
+            JOptionPane.showMessageDialog(this, "Success! Receipt generated.");
             updateMovieSelection();
         }
     }
 
     private JLabel createLegendLabel(String text, Color color) {
         JLabel label = new JLabel("  " + text + "  ");
-        label.setOpaque(true);
-        label.setBackground(color);
-        label.setForeground(Color.BLACK);
+        label.setOpaque(true); label.setBackground(color); label.setForeground(Color.BLACK);
         label.setFont(new Font("Arial", Font.BOLD, 16));
         label.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         return label;

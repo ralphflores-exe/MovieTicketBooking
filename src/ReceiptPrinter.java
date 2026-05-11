@@ -19,7 +19,7 @@ public class ReceiptPrinter {
 
         try (FileWriter writer = new FileWriter(fileName)) {
             writer.write("==========================================\n");
-            writer.write("       PREMIUM CINEMA EXPERIENCE         \n");
+            writer.write("                CineServe                 \n");
             writer.write("==========================================\n");
             writer.write("Date: " + new SimpleDateFormat("EEEE, MMM dd, yyyy").format(new Date()) + "\n");
             writer.write("Time: " + new SimpleDateFormat("hh:mm a").format(new Date()) + "\n");
