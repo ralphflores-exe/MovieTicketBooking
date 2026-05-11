@@ -37,14 +37,11 @@ public class MovieTicketBooking extends JFrame {
     private final int SODA_PRICE = 80;
 
     public MovieTicketBooking() {
-        // --- LOCAL STORAGE INTEGRATION ---
-        // 1. Attempt to load previously saved booking data
         Map<String, boolean[]> savedData = DatabaseManager.loadBookings();
         if (savedData != null) {
             bookedSeatsMap.putAll(savedData);
         }
 
-        // 2. Initialize any missing movie/time slots that aren't in the saved data
         for (Movie movie : moviesList) {
             for (String time : movie.showtimes) {
                 String key = movie.title + "-" + movie.cinema + "-" + time;
