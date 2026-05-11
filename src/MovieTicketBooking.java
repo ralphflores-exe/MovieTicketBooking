@@ -30,7 +30,6 @@ public class MovieTicketBooking extends JFrame {
     private final Map<String, boolean[]> bookedSeatsMap = new HashMap<>();
     private final ArrayList<Integer> currentSelection = new ArrayList<>();
 
-    // Updated: 5 rows (A-E) * 14 seats = 70 total seats
     private final int ROWS = 5;
     private final int COLS = 14;
     private final int TOTAL_SEATS = ROWS * COLS;
@@ -74,6 +73,7 @@ public class MovieTicketBooking extends JFrame {
 
         movieComboBox = new JComboBox<>(moviesList);
         movieComboBox.addActionListener(e -> updateTimeDropdown());
+        movieComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         selectionPanel.add(movieComboBox);
 
         cinemaIndicatorLabel = new JLabel("Location: Cinema 1");
@@ -88,6 +88,7 @@ public class MovieTicketBooking extends JFrame {
 
         timeComboBox = new JComboBox<>();
         timeComboBox.addActionListener(e -> updateMovieSelection());
+        timeComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         selectionPanel.add(timeComboBox);
 
         seatsRemainingLabel = new JLabel("Seats Left: " + TOTAL_SEATS);
@@ -153,7 +154,6 @@ public class MovieTicketBooking extends JFrame {
         seatPanel.setBackground(Color.BLACK);
         seatPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Updated: GridLayouts now use 5 rows (A-E)
         JPanel leftBlock = new JPanel(new GridLayout(ROWS, 4, 12, 12));
         JPanel centerBlock = new JPanel(new GridLayout(ROWS, 6, 12, 12));
         JPanel rightBlock = new JPanel(new GridLayout(ROWS, 4, 12, 12));
@@ -164,7 +164,6 @@ public class MovieTicketBooking extends JFrame {
 
         seatButtons = new JButton[TOTAL_SEATS];
 
-        // Updated: Loop now runs for ROWS (5 iterations, A to E)
         for (int r = 0; r < ROWS; r++) {
             char rowLetter = (char) ('A' + r);
             for (int c = 0; c < COLS; c++) {
@@ -248,7 +247,10 @@ public class MovieTicketBooking extends JFrame {
 
         Movie movie = (Movie) movieComboBox.getSelectedItem();
         String time = (String) timeComboBox.getSelectedItem();
-        posterLabel.setText("<html><center><font size='5'>" + movie.title + "</font><br><br>" + movie.cinema + " | " + time + "</center></html>");
+        posterLabel.setText("<html><center>" +
+                "<font size='6'><b>" + movie.title + "</b></font><br>" +
+                "<font size='5' color='#DDDDDD'>" + movie.cinema + " | " + time + "</font>" +
+                "</center></html>");
 
         boolean[] bookedSeats = bookedSeatsMap.get(sessionKey);
         int bookedCount = 0;
@@ -262,7 +264,14 @@ public class MovieTicketBooking extends JFrame {
                 seatButtons[i].setBackground(Color.GREEN);
             }
         }
-        seatsRemainingLabel.setText("Seats Left: " + (TOTAL_SEATS - bookedCount));
+        int seatsLeft = TOTAL_SEATS - bookedCount;
+        if (seatsLeft == 0) {
+            seatsRemainingLabel.setText("FULLY BOOKED");
+            seatsRemainingLabel.setForeground(Color.RED);
+        } else {
+            seatsRemainingLabel.setText("Seats Left: " + seatsLeft);
+            seatsRemainingLabel.setForeground(Color.ORANGE);
+        }
     }
 
     private void handleSeatClick(int index) {
@@ -295,10 +304,25 @@ public class MovieTicketBooking extends JFrame {
         }
 
         int totalTickets = currentSelection.size(), discountedCount = 0;
-        try {
-            String input = JOptionPane.showInputDialog(this, "Total Seats: " + totalTickets + "\nHow many Student/Senior discounts (20% off)?", "0");
-            discountedCount = Math.min(totalTickets, Math.max(0, Integer.parseInt(input)));
-        } catch (Exception e) { discountedCount = 0; }
+
+        while (true) {
+            String input = JOptionPane.showInputDialog(this,
+                    "Total Seats Selected: " + totalTickets + "\nHow many Student/Senior discounts (20% off)?", "0");
+
+            if (input == null) return; // User clicked Cancel
+
+            try {
+                int val = Integer.parseInt(input);
+                if (val < 0 || val > totalTickets) {
+                    JOptionPane.showMessageDialog(this, "Please enter a number between 0 and " + totalTickets, "Invalid Range", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    discountedCount = val;
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Please enter numbers only.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+            }
+        }
 
         int popcornQty = 0, sodaQty = 0;
         JPanel snackPanel = new JPanel(new GridLayout(2, 2, 15, 15));
@@ -312,8 +336,8 @@ public class MovieTicketBooking extends JFrame {
             sodaQty = (int) sodaSpinner.getValue();
         }
 
-        int reg = totalTickets - discountedCount;
-        int total = (reg * TICKET_PRICE) + (discountedCount * (int)(TICKET_PRICE * 0.8)) + (popcornQty * POPCORN_PRICE) + (sodaQty * SODA_PRICE);
+        int regular = totalTickets - discountedCount;
+        int total = (regular * TICKET_PRICE) + (discountedCount * (int)(TICKET_PRICE * 0.8)) + (popcornQty * POPCORN_PRICE) + (sodaQty * SODA_PRICE);
 
         Movie movie = (Movie) movieComboBox.getSelectedItem();
         String time = (String) timeComboBox.getSelectedItem();
@@ -324,13 +348,15 @@ public class MovieTicketBooking extends JFrame {
             seats.append((char) ('A' + (idx / COLS))).append((idx % COLS) + 1).append(i == currentSelection.size() - 1 ? "" : ", ");
         }
 
-        String summary = String.format("ORDER SUMMARY\nMovie: %s\nTickets: %d\nTOTAL: PHP %d\n\nFinalize?", movie.title, totalTickets, total);
-
+        String summary = String.format(
+                "ORDER SUMMARY\n------------------------------------\nMovie: %s\nTickets: %d (Reg: %d, Disc: %d)\nSnacks: %d Popcorn, %d Soda\n------------------------------------\nTOTAL: PHP %d\n\nFinalize and Print Receipt?",
+                movie.title, totalTickets, regular, discountedCount, popcornQty, sodaQty, total
+        );
         if (JOptionPane.showConfirmDialog(this, summary, "Payment", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             boolean[] booked = bookedSeatsMap.get(getCurrentSessionKey());
             for (int idx : currentSelection) booked[idx] = true;
             DatabaseManager.saveBookings(bookedSeatsMap);
-            ReceiptPrinter.generateReceipt(movie.title, movie.cinema, time, seats.toString(), reg, discountedCount, popcornQty, sodaQty, total, TICKET_PRICE);
+            ReceiptPrinter.generateReceipt(movie.title, movie.cinema, time, seats.toString(), regular, discountedCount, popcornQty, sodaQty, total, TICKET_PRICE);
             JOptionPane.showMessageDialog(this, "Success! Receipt generated.");
             updateMovieSelection();
         }
