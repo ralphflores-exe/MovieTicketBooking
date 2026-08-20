@@ -1,0 +1,19 @@
+==========================================
+                CineServe                 
+==========================================
+Date: Monday, May 18, 2026
+Time: 09:12 AM
+------------------------------------------
+MOVIE:    Kimetsu No Yaiba The Movie (2025): Infinity Castle
+CINEMA:   Cinema 1
+SHOWTIME: 10:00 AM
+SEATS:    B6
+------------------------------------------
+ITEMS Breakdown:
+- Regular Ticket (x1):   PHP 300
+------------------------------------------
+TOTAL AMOUNT:           PHP 300
+------------------------------------------
+       Thank you for choosing us!        
+    Please present this at the entrance.  
+==========================================

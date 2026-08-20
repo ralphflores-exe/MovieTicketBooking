@@ -1,0 +1,21 @@
+==========================================
+                CineServe                 
+==========================================
+Date: Monday, May 18, 2026
+Time: 08:58 AM
+------------------------------------------
+MOVIE:    Good Boy (2025)
+CINEMA:   Cinema 3
+SHOWTIME: 11:00 AM
+SEATS:    B8
+------------------------------------------
+ITEMS Breakdown:
+- Discounted Ticket (x1): PHP 240
+- Popcorn (x3):           PHP 450
+- Soda (x3):              PHP 240
+------------------------------------------
+TOTAL AMOUNT:           PHP 930
+------------------------------------------
+       Thank you for choosing us!        
+    Please present this at the entrance.  
+==========================================

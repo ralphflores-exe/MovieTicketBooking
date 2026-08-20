@@ -1,0 +1,22 @@
+==========================================
+                CineServe                 
+==========================================
+Date: Monday, May 18, 2026
+Time: 09:17 AM
+------------------------------------------
+MOVIE:    Project Hail Mary (2026)
+CINEMA:   Cinema 2
+SHOWTIME: 2:45 PM
+SEATS:    A9, C9, B10, B8, D8, D10, E9, E7, D6, C7, C5, B6, A5, A7, E5, A11, A13, B12, B14, C11, C13, D12, D14, E13, E11, A3, A1, B2, C1, B4, C3, D2, D4, E1, E3
+------------------------------------------
+ITEMS Breakdown:
+- Regular Ticket (x30):   PHP 9000
+- Discounted Ticket (x5): PHP 1200
+- Popcorn (x10):           PHP 1500
+- Soda (x5):              PHP 400
+------------------------------------------
+TOTAL AMOUNT:           PHP 12100
+------------------------------------------
+       Thank you for choosing us!        
+    Please present this at the entrance.  
+==========================================
